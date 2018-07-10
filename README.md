@@ -1,7 +1,5 @@
 # Python IMAP transparent proxy server
 
-Fully IMAP4rev1 compliant transparent proxy easy to modulate.
-
 ## Features
 
 * The proxy acts transparently and interprets every IMAP command
@@ -22,11 +20,13 @@ Modules are easy to integrate and easy to remove (just remove their calls in the
 
 ## Installation and run
 
+![Demonstration with PyCIRCLeanMail](demo.gif)
+
 Clone this repository, install and run the proxy.
 
 ```
-git clone https://github.com/xschul/IMAProxy.git
-cd IMAProxy
+git clone https://github.com/CIRCL/PyCIRCLeanIMAP.git
+cd PyCIRCLeanIMAP
 pip3 install -r requirements.txt
 python3 proxy/proxy.py -h
 ```
@@ -45,8 +45,3 @@ python3 tests/test_proxy.py $username $password $ip_proxy
 python3 tests/test_sanitizer.py -h
 python3 tests/test_sanitizer.py $username $password $ip_proxy
 ```
-
-## Authors
-
-* **Xavier Schul**
-* **CIRCL** - *Computer Incident Response Center Luxembourg* - [CIRCL](https://www.circl.lu/)
