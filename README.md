@@ -35,8 +35,6 @@ python3 proxy/proxy.py -h
 
 First, open [Thunderbird](https://www.mozilla.org/en-US/thunderbird/), right-click on your email address and select "Settings". In "Server Settings", modify the "Server Name" by the IP address of the proxy. That's it !
 
-It might not work if the IP address of the proxy is **IPv6** and the connection is **SSL/TLS**. If it does not work, please try with Connection security: None.
-
 ### Run the tests
 
 ```
