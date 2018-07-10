@@ -7,9 +7,9 @@ def run_tests(conn_proxy, username, password):
                 + 'IMAProxy + PyCIRCLeanMail tests\n').encode()
     test_seq1 = (
         ('login', (username, password)),
-        ('create', ('/tmp/xxx',)),
-        ('append', ('/tmp/xxx', None, None, test_mesg)),
-        ('select', ('/tmp/xxx',)),
+        ('create', ('tmp/xxx',)),
+        ('append', ('tmp/xxx', None, None, test_mesg)),
+        ('select', ('tmp/xxx',)),
         ('search', (None, 'SUBJECT', 'test')),
         ('fetch', ('1', '(FLAGS INTERNALDATE RFC822)')),
         ('uid', ('SEARCH', 'ALL')),
@@ -18,7 +18,7 @@ def run_tests(conn_proxy, username, password):
         ('uid', ('SEARCH', 'ALL')),
         ('response', ('EXISTS',)),
         ('expunge', ()),
-        ('delete', ('/tmp/xxx',)),
+        ('delete', ('tmp/xxx',)),
         ('logout', ()))
 
     failed_tests = []

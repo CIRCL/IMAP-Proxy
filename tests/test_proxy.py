@@ -7,12 +7,12 @@ def run_tests(conn_proxy, username, password):
                 + 'IMAProxy tests\n').encode()
     test_seq1 = (
         ('login', (username, password)),
-        ('create', ('/tmp/xxx',)),
-        ('rename', ('/tmp/xxx', '/tmp/yyy')),
-        ('CREATE', ('/tmp/yyz',)),
-        ('append', ('/tmp/yyz', None, None, test_mesg)),
-        ('list', ('/tmp', 'yy*')),
-        ('select', ('/tmp/yyz',)),
+        ('create', ('tmp/xxx',)),
+        ('rename', ('tmp/xxx', 'tmp/yyy')),
+        ('CREATE', ('tmp/yyz',)),
+        ('append', ('tmp/yyz', None, None, test_mesg)),
+        ('list', ('tmp', 'yy*')),
+        ('select', ('tmp/yyz',)),
         ('search', (None, 'SUBJECT', 'test')),
         ('fetch', ('1', '(FLAGS INTERNALDATE RFC822)')),
         ('uid', ('SEARCH', 'ALL')),
@@ -21,14 +21,13 @@ def run_tests(conn_proxy, username, password):
         ('namespace', ()),
         ('expunge', ()),
         ('recent', ()),
-        ('close', ()),
-        ('select', ()),
         ('response',('UIDVALIDITY',)),
         ('uid', ('SEARCH', 'ALL')),
         ('response', ('EXISTS',)),
         ('recent', ()),
-        ('delete', ('/tmp/yyz',)),
-        ('DELETE', ('/tmp/yyy',)),
+        ('close', ()),
+        ('delete', ('tmp/yyz',)),
+        ('DELETE', ('tmp/yyy',)),
         ('logout', ()))
 
     failed_tests = []
@@ -36,6 +35,7 @@ def run_tests(conn_proxy, username, password):
     def run(cmd, args):
         print("["+cmd+"]")
         typ, dat = getattr(conn_proxy, cmd)(*args)
+        print(typ, dat)
         
         if typ == 'NO': 
             failed_tests.append('%s => %s %s' % (cmd, typ, dat))

@@ -11,7 +11,7 @@ SSL_KEY="/etc/ssl/private/dovecot.key"
 sudo openssl req -new -x509 -days 3 -nodes \
     -out "$SSL_CERT" \
     -keyout "$SSL_KEY" \
-    -subj "/C=EU/ST=Europe/L=Home/O=Travis/OU=Travis DEV/CN=""$IMAP_SERVER_NAME"
+    -subj "/C=EU/ST=Europe/L=Home/O=Travis/OU=Travis DEV/CN=""$IMAP_SERVER"
 
 sudo chown root:dovecot "$SSL_CERT" "$SSL_KEY"
 sudo chmod 0440 "$SSL_CERT"
