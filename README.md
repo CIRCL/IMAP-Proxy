@@ -22,7 +22,7 @@ Modules are easy to integrate and easy to remove (just remove their calls in the
 
 ![Demonstration with PyCIRCLeanMail](demo.gif)
 
-Clone this repository, install and run the proxy.
+Clone this repository, install and run the proxy (sudo is required for some ports).
 
 ```
 git clone https://github.com/CIRCL/PyCIRCLeanIMAP.git
@@ -33,13 +33,4 @@ python3 proxy/proxy.py -h
 
 ### Run with Thunderbird
 
-First, open [Thunderbird](https://www.mozilla.org/en-US/thunderbird/), right-click on your email address and select "Settings". In "Server Settings", modify the "Server Name" by the IP address of the proxy. That's it !
-
-### Run the tests
-
-```
-python3 tests/test_proxy.py -h
-python3 tests/test_proxy.py $username $password $ip_proxy
-python3 tests/test_sanitizer.py -h
-python3 tests/test_sanitizer.py $username $password $ip_proxy
-```
+First, open [Thunderbird](https://www.mozilla.org/en-US/thunderbird/), right-click on your email address and select "Settings". In "Server Settings", modify the "Server Name" by the IP address of the proxy (or localhost). That's it !

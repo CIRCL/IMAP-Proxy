@@ -36,7 +36,8 @@ HOSTS = {
     'hotmail': 'imap-mail.outlook.com',
     'outlook': 'imap-mail.outlook.com',
     'yahoo': 'imap.mail.yahoo.com',
-    'gmail': 'imap.gmail.com'
+    'gmail': 'imap.gmail.com',
+    'dovecot': 'dovecot.travis.dev' # for travis testing
 }
 
 # Intercepted commands
@@ -267,7 +268,7 @@ class IMAP_Client:
 
     def move(self):
         """ Move an email to another mailbox """
-        misp.process(self)
+        #misp.process(self)
         self.transmit()
 
     def fetch(self):
@@ -381,4 +382,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Start proxy
+    print("Starting proxy")
     IMAP_Proxy(port=args.port, certfile=args.certfile, max_client=args.nclient, verbose=args.verbose, ipv6=args.ipv6)

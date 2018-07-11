@@ -33,9 +33,9 @@ def run_tests(conn_proxy, username, password):
     failed_tests = []
 
     def run(cmd, args):
-        print("["+cmd+"]")
+        print("["+cmd+"]", end=" ")
         typ, dat = getattr(conn_proxy, cmd)(*args)
-        print(typ, dat)
+        print(typ)
         
         if typ == 'NO': 
             failed_tests.append('%s => %s %s' % (cmd, typ, dat))
@@ -63,23 +63,29 @@ def run_tests(conn_proxy, username, password):
         print('SOME TESTS FAILED:')
         for test in failed_tests:
             print(test)
+        sys.exit(1)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('username', help='Email address of the user')
     parser.add_argument('password', help='Password of the user')
     parser.add_argument('ip_proxy', help='Ip address of the proxy')
+    parser.add_argument('-s', '--ssl', help='Enable SSL/TLS connection')
+    parser.add_argument('-p', '--port', type=int, help='Talk on the given port (Default: 143 or 993 with SSL/TLS enabled)')
     args = parser.parse_args()
 
     try:
-        print("Try to connect to the proxy without SSL/TLS")
-        run_tests(imaplib.IMAP4(args.ip_proxy), args.username, args.password)
+        if args.ssl:
+            if args.port:
+                run_tests(imaplib.IMAP4_SSL(args.ip_proxy, args.port), args.username, args.password)
+            else:
+                run_tests(imaplib.IMAP4_SSL(args.ip_proxy), args.username, args.password)
+
+        else:
+            if args.port:
+                run_tests(imaplib.IMAP4(args.ip_proxy, args.port), args.username, args.password)
+            else:
+                run_tests(imaplib.IMAP4(args.ip_proxy), args.username, args.password)
     except ConnectionRefusedError:
-        print("Port 143 blocked")
-        print("Try to connect to the proxy with SSL/TLS")
-        try:
-            run_tests(imaplib.IMAP4_SSL(args.ip_proxy), args.username, args.password)
-        except ConnectionRefusedError:
-            print("Ports 143 and 993 blocked")
-            print("Please verify if the proxy on ports 143/993 are up")
+        print('Port blocked')
     
