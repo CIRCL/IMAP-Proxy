@@ -1,4 +1,6 @@
-""" Methods used by the modules """
+"""
+    Helpers for the modules (PyCIRCLeanMail & MISP)
+"""
 
 def parse_ids(str_ids):
     """ Convert string of ids to a list of ids

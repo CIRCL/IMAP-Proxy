@@ -1,9 +1,14 @@
+"""
+    Implementation the MISP module.
+    Forward to MISP the emails moved to MISP mailfolder
+"""
+
 import re, imaplib, smtplib, email
 from email.message import EmailMessage
 from email import message_from_bytes
 from .helpers import parse_ids
 
-# MISP client mailbox (should be created)
+# MISP client mailbox (should be created in client side)
 MISP_FOLDER = '\"MISP\"'
 MISP_SERVER = 'freeblind.net'
 BODY = """m2m:attach_original_mail:1"""

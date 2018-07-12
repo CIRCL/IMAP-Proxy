@@ -1,3 +1,8 @@
+"""
+    Implementation of the PyCIRCLeanMail module.
+    Sanitize emails before being fetched by the user.
+"""
+
 import email, re, imaplib, time
 from .helpers import parse_ids
 from io import BytesIO

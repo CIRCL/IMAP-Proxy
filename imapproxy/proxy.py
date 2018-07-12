@@ -1,3 +1,7 @@
+"""
+    Implementation of the proxy
+"""
+
 import sys, socket, ssl, re, base64, threading, argparse, imaplib
 
 from .pycircleanmail import process as pycircleanmail_module
