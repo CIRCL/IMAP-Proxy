@@ -17,18 +17,17 @@ env:
     - PROXY_PORT=8002
 
 install:
-  - pip3 install -r requirements.txt
   - sh .travis/run_imap_server.sh
+  - python3 setup.py install
+  - pip3 install -r requirements.txt
 
 script:
-  - python3 proxy/proxy.py -p "$PROXY_PORT" &
+  - start.py -p "$PROXY_PORT" &
   - pid=$!
   - sleep 5
-  - python3 tests/test_proxy.py "$IMAP_USERNAME" "$IMAP_PASSWORD" localhost -p "$PROXY_PORT"
-  - python3 tests/test_sanitizer.py "$IMAP_USERNAME" "$IMAP_PASSWORD" localhost -p "$PROXY_PORT"
+  - test_proxy.py "$IMAP_USERNAME" "$IMAP_PASSWORD" localhost -p "$PROXY_PORT"
+  - test_pycircleanmail.py "$IMAP_USERNAME" "$IMAP_PASSWORD" localhost -p "$PROXY_PORT"
   - kill -s INT $pid
 
 notifications:
-  email:
-    on_success: change
-    on_failure: change
+  email: false

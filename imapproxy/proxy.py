@@ -1,5 +1,7 @@
 import sys, socket, ssl, re, base64, threading, argparse, imaplib
-from modules import pycircleanmail, misp
+
+from .pycircleanmail import process as pycircleanmail_module
+from .misp import process as misp_module
 
 # Default maximum number of client supported by the proxy
 MAX_CLIENT = 5  
@@ -37,7 +39,7 @@ HOSTS = {
     'outlook': 'imap-mail.outlook.com',
     'yahoo': 'imap.mail.yahoo.com',
     'gmail': 'imap.gmail.com',
-    'dovecot': 'dovecot.travis.dev' # for travis testing
+    'dovecot': 'dovecot.travis.dev' # for Travis-CI
 }
 
 # Intercepted commands
@@ -91,31 +93,34 @@ class IMAP_Proxy:
 
 
     def listen(self):
-        """ Wait and create a new IMAP_Client for each new connection. """
-
-        def new_client(ssock):
-            if not self.certfile: # Connection without SSL/TLS
-                IMAP_Client(ssock, self.verbose)
-            else: # Connection with SSL/TLS
-                IMAP_Client_SSL(ssock, self.certfile, self.verbose)
+        """ Wait and create a new Connection for each new connection with a client. """
 
         while True:
             try:
                 ssock, addr = self.sock.accept()
-                threading.Thread(target = new_client, args = (ssock,)).start()
+                if self.certfile: # Add SSL/TLS
+                    ssock = ssl.wrap_socket(ssock, certfile=self.certfile, server_side=True)
+
+                # Connect the proxy with the client
+                threading.Thread(target = self.new_connection, args = (ssock,)).start()
             except KeyboardInterrupt:
                 break
+            except ssl.SSLError as e:
+                raise
             
         if self.sock:
             self.sock.close()
 
-class IMAP_Client:
+    def new_connection(self, ssock):
+        Connection(ssock, self.verbose)
 
-    r""" Implementation of a client.
+class Connection:
 
-    Instantiate with: IMAP_Client([ssock[, verbose]])
+    r""" Implementation of a connection with a client.
 
-            socket - Connection (with or without SSL/TLS) with the client
+    Instantiate with: Connection([ssock[, verbose]])
+
+            socket - Socket (with or without SSL/TLS) with the client
             verbose - Display the IMAP payload (default: False)
     
     Listens on the socket commands from the client.
@@ -136,7 +141,8 @@ class IMAP_Client:
         except ValueError as e:
             print('[ERROR]', e)
 
-        self.close()
+        if self.conn_client:
+            self.conn_client.close()
 
     #       Listen client/server and connect server
 
@@ -147,7 +153,6 @@ class IMAP_Client:
             for request in self.recv_from_client().split('\r\n'): # In case of multiple requests
 
                 match = Tagged_Request.match(request)
-
                 if not match:
                     # Not a correct request
                     self.send_to_client(self.error('Incorrect request'))
@@ -163,12 +168,11 @@ class IMAP_Client:
                     # Command supported by the proxy
                     getattr(self, self.client_command)()
                 else:
-                    # Command unsupported -> directly transmit the command 
-                    # to the server and response to the client
+                    # Command unsupported -> directly transmit to the server
                     self.transmit()
 
     def transmit(self):
-        """ Replace client tag by the server tag """
+        """ Replace client tag by the server tag, transmit it to the server and listen to the server """
         server_tag = self.conn_server._new_tag().decode()
         self.send_to_server(self.request.replace(self.client_tag, server_tag, 1))
         self.listen_server(server_tag)
@@ -178,6 +182,7 @@ class IMAP_Client:
         with the corresponding server_tag is received"""
 
         while True:
+
             response = self.recv_from_server()
             response_match = Tagged_Response.match(response)
 
@@ -229,7 +234,7 @@ class IMAP_Client:
 
         self.send_to_client(self.success())
 
-    #       Supported IMAP commands
+    #       Mandatory supported IMAP commands
 
     def capability(self):
         """ Send capabilites of the proxy """
@@ -266,14 +271,16 @@ class IMAP_Client:
         self.set_current_folder(self.client_flags)
         self.transmit()
 
-    def move(self):
-        """ Move an email to another mailbox """
-        #misp.process(self)
-        self.transmit()
+    #       CIRCL modules
 
     def fetch(self):
         """ Fetch an email """
-        pycircleanmail.process(self)
+        pycircleanmail_module(self)
+        self.transmit()
+
+    def move(self):
+        """ Move an email to another mailbox """
+        misp_module(self)
         self.transmit()
 
     #       Command completion
@@ -332,55 +339,14 @@ class IMAP_Client:
 
         return str_response
 
-    #       Utils
+    #       Helpers
 
     def set_current_folder(self, folder):
         """ Set the current folder of the client """
         self.current_folder = self.remove_quotation_marks(folder)
 
     def remove_quotation_marks(self, text):
-        """ Remove quotation marks of a String """
+        """ Remove quotation marks from a String """
         if text.startswith('"') and text.endswith('"'):
             text = text[1:-1]
         return text
-
-    def close(self):
-        """ Close connection with the client """
-        if self.conn_client:
-            self.conn_client.close()
-    
-
-class IMAP_Client_SSL(IMAP_Client):
-    r""" IMAP_Client class over SSL/TLS connection
-
-    Instantiate with: IMAP_Client_SSL([ssock[, certfile[, verbose]]])
-    
-        ssock - Socket with the client;
-        certfile - PEM formatted certificate chain file;
-        verbose - Display the IMAP payload (default: False)
-
-    for more documentation see the docstring of the parent class IMAP_Client.
-    """
-
-    def __init__(self, ssock, certfile, verbose = False):
-        try:
-            self.conn_client = ssl.wrap_socket(ssock, certfile=certfile, server_side=True)
-        except ssl.SSLError as e:
-            raise
-
-        IMAP_Client.__init__(self, self.conn_client, verbose)
-
-if __name__ == '__main__':
-    # Parser
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--certfile', help='Enable SSL/TLS connection over port 993 (by default) with the certfile given. '
-        + 'Without this argument, the connection will not use SSL/TLS over port 143 (by default)')
-    parser.add_argument('-p', '--port', type=int, help='Listen on the given port')
-    parser.add_argument('-n', '--nclient', type=int, help='Maximum number of client supported by the proxy')
-    parser.add_argument('-v', '--verbose', help='Echo IMAP payload', action='store_true')
-    parser.add_argument('-6', '--ipv6', help='Enable IPv6 connection (the proxy should have an IPv6 address)', action='store_true')
-    args = parser.parse_args()
-
-    # Start proxy
-    print("Starting proxy")
-    IMAP_Proxy(port=args.port, certfile=args.certfile, max_client=args.nclient, verbose=args.verbose, ipv6=args.ipv6)

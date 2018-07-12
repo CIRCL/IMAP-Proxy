@@ -1,5 +1,5 @@
 import email, re, imaplib, time
-from .utils import parse_ids
+from .helpers import parse_ids
 from io import BytesIO
 from kittengroomer_email import KittenGroomerMail
 

@@ -1,7 +1,7 @@
 import re, imaplib, smtplib, email
 from email.message import EmailMessage
 from email import message_from_bytes
-from .utils import parse_ids
+from .helpers import parse_ids
 
 # MISP client mailbox (should be created)
 MISP_FOLDER = '\"MISP\"'

@@ -2,13 +2,8 @@
 
 ## Features
 
-* The proxy acts transparently and interprets every IMAP command
-* Support TLS/SSL for both client and server connections
-* Support IPv6
+* Support IPv6 and TLS/SSL for both client and server connections
 * Works with email applications as [Thunderbird](https://www.mozilla.org/en-US/thunderbird/) or [Outlook](https://outlook.live.com/owa/)
-* Asynchronous, non-blocking socket connections
-* Possibility to display IMAP payload
-* Easy to modulate and to handle IMAP commands
 * Extensions: [UIDPLUS](https://rfc-editor.org/rfc/rfc4315.txt), [MOVE](https://rfc-editor.org/rfc/rfc6851.txt), [ID](https://rfc-editor.org/rfc/rfc2971.txt), [UNSELECT](https://rfc-editor.org/rfc/rfc3691.txt), [CHILDREN](https://rfc-editor.org/rfc/rfc3348.txt) and [NAMESPACE](https://rfc-editor.org/rfc/rfc2342.txt).
 
 ### Integrated modules
@@ -22,15 +17,16 @@ Modules are easy to integrate and easy to remove (just remove their calls in the
 
 ![Demonstration with PyCIRCLeanMail](demo.gif)
 
-Clone this repository, install and run the proxy (sudo is required for some ports).
+Clone this repository, install and run the proxy.
 
 ```
-git clone https://github.com/CIRCL/PyCIRCLeanIMAP.git
-cd PyCIRCLeanIMAP
+git clone https://github.com/CIRCL/IMAP-Proxy.git
+cd IMAP-Proxy
+python3 setup.py install
 pip3 install -r requirements.txt
-python3 proxy/proxy.py -h
+start.py -h
 ```
 
 ### Run with Thunderbird
 
-First, open [Thunderbird](https://www.mozilla.org/en-US/thunderbird/), right-click on your email address and select "Settings". In "Server Settings", modify the "Server Name" by the IP address of the proxy (or localhost). That's it !
+First, open [Thunderbird](https://www.mozilla.org/en-US/thunderbird/), right-click on your email address and select *"Settings"*. In *"Server Settings"*, modify the *"Server Name"* by the IP address of the proxy (or localhost). That's it !
