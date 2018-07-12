@@ -66,7 +66,7 @@ if __name__ == '__main__':
     parser.add_argument('username', help='Email address of the user')
     parser.add_argument('password', help='Password of the user')
     parser.add_argument('ip_proxy', help='Ip address of the proxy')
-    parser.add_argument('-s', '--ssl', help='Enable SSL/TLS connection')
+    parser.add_argument('-s', '--ssl', help='Enable SSL/TLS connection', action='store_true')
     parser.add_argument('-p', '--port', type=int, help='Talk on the given port (Default: 143 or 993 with SSL/TLS enabled)')
     args = parser.parse_args()
 
