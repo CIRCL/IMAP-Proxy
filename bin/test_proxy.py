@@ -7,7 +7,7 @@ def run_tests(conn_proxy, username, password):
                 + 'IMAProxy tests\n').encode()
     test_seq1 = (
         ('login', (username, password)),
-        ('create', ('tmp/xxx',)),
+        #('create', ('tmp/xxx',)),
         ('rename', ('tmp/xxx', 'tmp/yyy')),
         ('CREATE', ('tmp/yyz',)),
         ('append', ('tmp/yyz', None, None, test_mesg)),
