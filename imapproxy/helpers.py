@@ -7,7 +7,7 @@ def parse_ids(str_ids):
 
         str_ids - ids of format "1:6" or "1,3:5" or "1,4"
 
-    If str_ids = "1:10", return (1,2,3,4,5,6).
+    If str_ids = "1:6", return (1,2,3,4,5,6).
     If str_ids = "1,3:5", return (1,3,4,5).
     If str_ids = "1,4", return (1,4).
     """

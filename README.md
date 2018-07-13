@@ -1,4 +1,4 @@
-# Python IMAP transparent proxy server
+# Modular Python IMAP proxy
 
 [![Build Status](https://travis-ci.org/CIRCL/IMAP-Proxy.svg?branch=master)](https://travis-ci.org/CIRCL/IMAP-Proxy)
 
