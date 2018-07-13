@@ -30,7 +30,7 @@ MSG_DATA = 'BODY.PEEK[]'
 def process(client):
     """ Apply the MISP module when an email is moved to the MISP mailbox
 
-        client - IMAP_Client object
+        client - Connection object
 
     """
 
@@ -69,7 +69,6 @@ def forward_to_misp(id, conn_server, folder, uidc):
     result, response = conn_server.uid('fetch', id, MSG_DATA) if uidc else conn_server.fetch(id, MSG_DATA)
 
     if result == 'OK' and response != [b'The specified message set is invalid.'] and response != [None]:
-        print(response[0][1])
         bmail = message_from_bytes(response[0][1])
     else:
         return

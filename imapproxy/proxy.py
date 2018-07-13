@@ -205,7 +205,7 @@ class Connection:
             if response.startswith('+') and self.client_command.upper() != 'FETCH':
                 ##   Continuation response
                 client_sequence = self.recv_from_client()
-                while client_sequence != '': # Client sequence ends with empty request
+                while client_sequence != '' and not client_sequence.endswith('\r\n'): # Client sequence ends with empty request
                     self.send_to_server(client_sequence)
                     client_sequence = self.recv_from_client()
                 self.send_to_server(client_sequence)
