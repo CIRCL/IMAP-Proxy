@@ -22,7 +22,7 @@ install:
   - pip3 install -r requirements.txt
 
 script:
-  - start.py -p "$PROXY_PORT" &
+  - start_cl.py -p "$PROXY_PORT" &
   - pid=$!
   - sleep 5
   - test_proxy.py "$IMAP_USERNAME" "$IMAP_PASSWORD" localhost -p "$PROXY_PORT"

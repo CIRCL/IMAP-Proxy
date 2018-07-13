@@ -14,7 +14,7 @@ def run_tests(conn_proxy, username, password):
         ('fetch', ('1', '(FLAGS INTERNALDATE RFC822)')),
         ('uid', ('SEARCH', 'ALL')),
         ('response', ('EXISTS',)),
-        ('create', ('Quarantine',)), # Should be comment if QUarantine already exists
+        ('create', ('Quarantine',)), # Should be commented if Quarantine folder already exists
         ('select', ('Quarantine',)),
         ('uid', ('SEARCH', 'ALL')),
         ('response', ('EXISTS',)),

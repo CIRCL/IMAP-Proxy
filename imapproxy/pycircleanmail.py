@@ -39,7 +39,7 @@ def process(client):
     request = client.request
     conn_server = client.conn_server
     folder = client.current_folder
-    key = 'secret'
+    key = client.key
 
     # Only sanitize emails in the Inbox
     if ("QUARANTINE" in folder.upper()) or ("SENT" in folder.upper()): 
@@ -76,7 +76,6 @@ def process_email(id, conn_server, folder, uidc, key):
     conn_server.select(folder)
 
     if has_CIRCL_signature(id, conn_server, uidc): 
-        print('Email already sanitized')
         return
     print('Email not sanitized')
 

@@ -19,14 +19,25 @@ Modules are easy to integrate and to remove (just remove their calls in the prox
 
 ![Demonstration with PyCIRCLeanMail](demo.gif)
 
-Clone this repository, install and run the proxy.
+### Installation
 
 ```
 git clone https://github.com/CIRCL/IMAP-Proxy.git
 cd IMAP-Proxy
 python3 setup.py install
 pip3 install -r requirements.txt
-start.py -h
+```
+
+### Run the proxy
+
+It can be started by adding arguments to the command line:
+```
+start_cl.py -h
+```
+
+Or it can be started with the configuration file *imapproxy.conf*:
+```
+start_conf.py
 ```
 
 ### Run with Thunderbird

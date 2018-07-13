@@ -7,8 +7,12 @@ import sys, socket, ssl, re, base64, threading, argparse, imaplib
 from .pycircleanmail import process as pycircleanmail_module
 from .misp import process as misp_module
 
+# Default key to verify integrity of emails modified by the proxy
+DEFAULT_KEY = 'secret-proxy'
+
 # Default maximum number of client supported by the proxy
 MAX_CLIENT = 5  
+
 # Default ports
 IMAP_PORT, IMAP_SSL_PORT = 143, 993
 CRLF = b'\r\n'
@@ -61,13 +65,14 @@ class IMAP_Proxy:
     
     r""" Implementation of the proxy.
 
-    Instantiate with: IMAP_Proxy([port[, host[, certfile[, max_client[, verbose[, ipv6]]]]]])
+    Instantiate with: IMAP_Proxy([port[, host[, certfile[, key[, max_client[, verbose[, ipv6]]]]]]])
 
             port - port number (default: None. Standard IMAP4 / IMAP4 SSL port will be selected);
             host - host's name (default: localhost);
             certfile - PEM formatted certificate chain file (default: None);
                 Note: if certfile is provided, the connection will be secured over
                 SSL/TLS. Otherwise, it won't be secured.
+            key - Key used to verify the integrity of emails append by the proxy (default: 'secret-proxy')
             max_client - Maximum number of client supported by the proxy (default: global variable MAX_CLIENT);
             verbose - Display the IMAP payload (default: False)
             ipv6 - Should be enabled if the ip of the proxy is IPv6 (default: False)
@@ -76,20 +81,17 @@ class IMAP_Proxy:
     secured connections) for each new client. These socket connections are asynchronous and non-blocking.
     """
 
-    def __init__(self, port=None, host='', certfile=None, max_client=MAX_CLIENT, verbose=False, ipv6=False):
+    def __init__(self, port=None, host='', certfile=None, key=DEFAULT_KEY, max_client=MAX_CLIENT, verbose=False, ipv6=False):
         self.verbose = verbose
         self.certfile = certfile
+        self.key = key
 
         if not port: # Set default port
             port = IMAP_SSL_PORT if certfile else IMAP_PORT
 
-        if not max_client:
-            max_client = MAX_CLIENT 
-
-        if ipv6:
-            self.sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-        else:
-            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # IPv4 or IPv6
+        addr_fam = socket.AF_INET6 if ipv6 else socket.AF_INET
+        self.sock = socket.socket(addr_fam, socket.SOCK_STREAM)
             
         self.sock.bind(('', port))
         self.sock.listen(max_client)
@@ -116,7 +118,7 @@ class IMAP_Proxy:
             self.sock.close()
 
     def new_connection(self, ssock):
-        Connection(ssock, self.verbose)
+        Connection(ssock, self.key, self.verbose)
 
 class Connection:
 
@@ -130,8 +132,9 @@ class Connection:
     Listens on the socket commands from the client.
     """
 
-    def __init__(self, socket, verbose = False):
+    def __init__(self, socket, key, verbose = False):
         self.verbose = verbose
+        self.key = key
         self.conn_client = socket
         self.conn_server = None
 
