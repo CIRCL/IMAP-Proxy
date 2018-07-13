@@ -7,14 +7,14 @@ def run_tests(conn_proxy, username, password):
                 + 'IMAProxy + PyCIRCLeanMail tests\n').encode()
     test_seq1 = (
         ('login', (username, password)),
-        #('create', ('tmp/xxx',)),
+        ('create', ('tmp/xxx',)),
         ('append', ('tmp/xxx', None, None, test_mesg)),
         ('select', ('tmp/xxx',)),
         ('search', (None, 'SUBJECT', 'test')),
         ('fetch', ('1', '(FLAGS INTERNALDATE RFC822)')),
         ('uid', ('SEARCH', 'ALL')),
         ('response', ('EXISTS',)),
-        #('create', ('Quarantine',)), # Should be commented if Quarantine folder already exists
+        ('create', ('Quarantine',)), # Should be commented if Quarantine folder already exists
         ('select', ('Quarantine',)),
         ('uid', ('SEARCH', 'ALL')),
         ('response', ('EXISTS',)),
