@@ -89,6 +89,9 @@ class IMAP_Proxy:
         if not port: # Set default port
             port = IMAP_SSL_PORT if certfile else IMAP_PORT
 
+        if not max_client:
+            max_client = MAX_CLIENT
+
         # IPv4 or IPv6
         addr_fam = socket.AF_INET6 if ipv6 else socket.AF_INET
         self.sock = socket.socket(addr_fam, socket.SOCK_STREAM)

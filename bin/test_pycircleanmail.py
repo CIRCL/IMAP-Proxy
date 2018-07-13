@@ -7,14 +7,14 @@ def run_tests(conn_proxy, username, password):
                 + 'IMAProxy + PyCIRCLeanMail tests\n').encode()
     test_seq1 = (
         ('login', (username, password)),
-        ('create', ('tmp/xxx',)),
+        #('create', ('tmp/xxx',)),
         ('append', ('tmp/xxx', None, None, test_mesg)),
         ('select', ('tmp/xxx',)),
         ('search', (None, 'SUBJECT', 'test')),
         ('fetch', ('1', '(FLAGS INTERNALDATE RFC822)')),
         ('uid', ('SEARCH', 'ALL')),
         ('response', ('EXISTS',)),
-        ('create', ('Quarantine',)), # Should be commented if Quarantine folder already exists
+        #('create', ('Quarantine',)), # Should be commented if Quarantine folder already exists
         ('select', ('Quarantine',)),
         ('uid', ('SEARCH', 'ALL')),
         ('response', ('EXISTS',)),
@@ -48,6 +48,8 @@ def run_tests(conn_proxy, username, password):
         # uid[-1] is the last email received
         result = run('uid', ('FETCH', '%s' % uid[-1].decode(),
                 '(FLAGS INTERNALDATE RFC822.SIZE RFC822.HEADER RFC822.TEXT)'))
+        print('bug')
+        print(result)
         mail = result[0][1]
         if 'CIRCL-Sanitizer' not in mail.decode():
             failed_tests.append('Email not sanitized')
